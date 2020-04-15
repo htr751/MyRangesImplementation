@@ -21,6 +21,13 @@ namespace typeValidation {
 }
 
 namespace RangeTraits {
+	template<typename, typename = void>
+	struct is_iterator : std::false_type {};
+
+	template<typename Iterator>
+	struct is_iterator<Iterator, std::void_t<std::enable_if_t<
+		!std::is_same_v<typename std::iterator_traits<Iterator>::value_type, void>>>> : std::true_type{};
+
 	template<typename Range>
 	constexpr bool isRange() {
 		if constexpr (!typeValidation::template is_valid<Range>([](auto&& range)->decltype(range.begin()) {}))

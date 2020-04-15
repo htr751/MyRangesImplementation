@@ -13,3 +13,14 @@ TEST_CASE("check if isRange function returns false for non range class like NonR
 	constexpr auto result = RangeTraits::isRange<NonRange>();
 	REQUIRE(result == false);
 }
+
+TEST_CASE("check if is_iterator returns true for an iterator type like transfrom_iterator", "[is_iterator]") {
+	auto transformFunction = [](int x) {return 2 * x; };
+	constexpr auto result = RangeTraits::is_iterator<ranges::transform_iterator<std::vector<int>::iterator, decltype(transformFunction)>>::value;
+	REQUIRE(result == true);
+}
+
+TEST_CASE("check if is_iterator returns false for a type which isn't iterator", "[is_iterator]") {
+	constexpr auto result = RangeTraits::is_iterator<NonRange>::value;
+	REQUIRE(result == false);
+}
