@@ -1,8 +1,10 @@
 #pragma once
 #include<iterator>
+#include<type_traits>
 
 namespace ranges {
-	template<typename Iterator, typename TransformFunc>
+	template<typename Iterator, typename TransformFunc, 
+	typename Stub = decltype(std::declval<TransformFunc>()(std::declval<typename std::iterator_traits<Iterator>::value_type>()))>
 	class transform_iterator
 	{
 		Iterator m_curIterator;
@@ -21,39 +23,39 @@ namespace ranges {
 
 		transform_iterator() noexcept = delete;
 
-		transform_iterator(const transform_iterator<Iterator, TransformFunc>& other)
+		transform_iterator(const transform_iterator<Iterator, TransformFunc, Stub>& other)
 			noexcept(std::is_nothrow_copy_constructible_v<Iterator>&& std::is_nothrow_copy_constructible_v<TransformFunc>) = default;
 
-		transform_iterator(transform_iterator<Iterator, TransformFunc>&& other)
+		transform_iterator(transform_iterator<Iterator, TransformFunc, Stub>&& other)
 			noexcept(std::is_nothrow_move_constructible_v<Iterator>&& std::is_nothrow_move_constructible_v<TransformFunc>) = default;
 
-		transform_iterator<Iterator, TransformFunc>& operator=(const transform_iterator<Iterator, TransformFunc>& other)
+		transform_iterator<Iterator, TransformFunc, Stub>& operator=(const transform_iterator<Iterator, TransformFunc, Stub>& other)
 			noexcept(std::is_nothrow_copy_assignable_v<Iterator>) {
 			this->m_curIterator = other.m_curIterator;
 			return *this;
 		}
 
-		transform_iterator<Iterator, TransformFunc>& operator=(transform_iterator<Iterator, TransformFunc>&& other)
+		transform_iterator<Iterator, TransformFunc, Stub>& operator=(transform_iterator<Iterator, TransformFunc, Stub>&& other)
 			noexcept(std::is_nothrow_move_assignable_v<Iterator>) {
 			this->m_curIterator = std::move(other.m_curIterator);
 			return *this;
 		}
 
-		transform_iterator<Iterator, TransformFunc>& operator++() noexcept(noexcept(++m_curIterator)) {
+		transform_iterator<Iterator, TransformFunc, Stub>& operator++() noexcept(noexcept(++m_curIterator)) {
 			++m_curIterator; return *this;
 		}
-		transform_iterator<Iterator, TransformFunc> operator++(int) {
+		transform_iterator<Iterator, TransformFunc, Stub> operator++(int) {
 			auto former_iterator = *this;
 			++(*this);
 			return former_iterator;
 		}
 
-		bool operator==(const transform_iterator<Iterator, TransformFunc>& other)
+		bool operator==(const transform_iterator<Iterator, TransformFunc, Stub>& other)
 			const noexcept(noexcept(this->m_curIterator == other.m_curIterator)) {
 			return this->m_curIterator == other.m_curIterator;
 		}
 
-		bool operator!=(const transform_iterator<Iterator, TransformFunc>& other)
+		bool operator!=(const transform_iterator<Iterator, TransformFunc, Stub>& other)
 			const noexcept(noexcept(*this == other)) {
 			return !(*this == other);
 		}
@@ -62,36 +64,4 @@ namespace ranges {
 			return m_transform(*m_curIterator);
 		}
 	};
-
-	template<typename Range>
-	constexpr bool isRange() {
-		return true;
-	}
-
-	namespace view {
-
-		template<typename Range, typename TransformFunc>
-		class transform_range_adaptor {
-			Range m_underlyingRange;
-			TransformFunc m_transform;
-		};
-	}
-}
-
-namespace typeValidation {
-	template<typename Func, typename T>
-	struct is_valid_impl {
-		template<typename, typename = void> 
-		struct checkValidation : std::false_type{};
-
-		template<typename U>
-		struct checkValidation<U, std::void_t<decltype(std::declval<Func>()(std::declval<U>()))>> : std::true_type {};
-
-		static constexpr bool value = checkValidation<T>::value;
-	};
-
-	template<typename T, typename Func>
-	constexpr bool is_valid(Func&& f) {
-		return is_valid_impl<Func, T>::value;
-	}
 }
