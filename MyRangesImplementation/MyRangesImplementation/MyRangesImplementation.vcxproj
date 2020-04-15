@@ -152,6 +152,7 @@
     <ClCompile Include="is_valid_test.cpp" />
     <ClCompile Include="range_tarits_test.cpp" />
     <ClCompile Include="transform_iterator_test.cpp" />
+    <ClCompile Include="transform_range_adaptor_test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

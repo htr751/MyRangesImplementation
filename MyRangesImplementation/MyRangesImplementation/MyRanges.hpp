@@ -1,6 +1,8 @@
 #pragma once
 #include<iterator>
 #include<type_traits>
+#include<optional>
+#include<vector>
 
 namespace typeInformation {
 	template<typename Func, typename T>
@@ -124,5 +126,77 @@ namespace ranges {
 		}
 	};
 
+	namespace view {
+		template<typename Range, typename TransformFunc, typename Stub = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+		class transform_range_adaptor {
+			std::optional<Range> m_range;
+			TransformFunc m_transform;
 
+			//this static variables remove code duplication in the noexcept clauses
+			static constexpr bool is_transformFunc_has_nothrow_move_ctor = std::is_nothrow_move_constructible_v<TransformFunc>;
+			static constexpr bool is_transformFunc_has_nothrow_copy_ctor = std::is_nothrow_copy_constructible_v<TransformFunc>;
+			static constexpr bool is_range_has_nothrow_move_ctor = std::is_nothrow_constructible_v<std::optional<Range>, std::add_rvalue_reference_t<Range>>;
+			static constexpr bool is_range_has_nothrow_copy_ctor = std::is_nothrow_constructible_v<std::optional<Range>, std::add_const_t<std::add_lvalue_reference_t<Range>>>;
+			static constexpr bool is_optionalRange_has_nothrow_copy_ctor = std::is_nothrow_copy_constructible_v<std::optional<Range>>;
+			static constexpr bool is_optionalRange_has_nothrow_move_ctor = std::is_nothrow_move_constructible_v<std::optional<Range>>;
+		
+			static constexpr bool is_range_has_nothrow_copy_assignment = std::is_nothrow_assignable_v<std::optional<Range>, std::add_const_t<std::add_lvalue_reference_t<Range>>>;
+			static constexpr bool is_range_has_nothow_move_assignment = std::is_nothrow_assignable_v<std::optional<Range>, std::add_rvalue_reference_t<Range>>;
+		public:
+			using value_type = std::invoke_result_t<TransformFunc, typename Range::value_type>;
+			using iterator = ranges::transform_iterator<typename Range::iterator, TransformFunc>;
+
+			transform_range_adaptor(TransformFunc func)
+				noexcept(is_transformFunc_has_nothrow_move_ctor)
+				: m_transform(std::move(func)) {}
+
+			transform_range_adaptor(const Range& range, TransformFunc func)
+				noexcept(is_transformFunc_has_nothrow_move_ctor && is_range_has_nothrow_copy_ctor)
+				: m_transform(std::move(func)), m_range(range) {}
+
+			transform_range_adaptor(Range&& range, TransformFunc func)
+				noexcept(is_transformFunc_has_nothrow_move_ctor && is_range_has_nothrow_move_ctor)
+				: m_transform(std::move(func)), m_range(std::move(range)) {}
+
+			transform_range_adaptor(const transform_range_adaptor<Range, TransformFunc, Stub>& other)
+				noexcept(is_transformFunc_has_nothrow_copy_ctor&& is_optionalRange_has_nothrow_copy_ctor)
+				:m_transform(other.m_transform), m_range(other.m_range) {}
+
+			transform_range_adaptor(transform_range_adaptor<Range, TransformFunc, Stub>&& other)
+				noexcept(is_transformFunc_has_nothrow_move_ctor&& is_optionalRange_has_nothrow_move_ctor)
+				:m_transform(std::move(other.m_transform)), m_range(std::move(other.m_range)) {}
+
+			transform_range_adaptor<Range, TransformFunc, Stub>& operator=(const Range& range)
+				noexcept(is_range_has_nothrow_copy_assignment) {
+				this->m_range = range;
+			}
+
+			transform_range_adaptor<Range, TransformFunc, Stub>& operator=(Range&& range)
+				noexcept(is_range_has_nothrow_copy_assignment) {
+				this->m_range = std::move(range);
+			}
+
+			auto begin() const{
+				if(this->m_range.has_value())
+					return ranges::transform_iterator(this->m_range.value().begin(), this->m_transform);
+				throw std::runtime_error("transform_range_adaptor wasn't spplied with underlying range");
+			}
+			auto end() const {
+				if(this->m_range.has_value())
+					return ranges::transform_iterator(this->m_range.value().end(), this->m_transform);
+				throw std::runtime_error("transform_range_adaptor wasn't spplied with underlying range");
+			}
+
+			decltype(auto) toVector() const {
+				std::vector<value_type> result;
+				for (auto&& value : *this)
+					result.push_back(value);
+				return result;
+			}
+
+			operator std::vector<value_type>() const {
+				return this->toVector();
+			}
+		};
+	}
 }
