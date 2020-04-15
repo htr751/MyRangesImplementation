@@ -1,4 +1,5 @@
 ﻿  is_valid_test.cpp
+  range_tarits_test.cpp
   transform_iterator_test.cpp
   Generating Code...
   MyRangesImplementation.vcxproj -> C:\Users\htr751\source\MyRangesImplementation\MyRangesImplementation\x64\Debug\MyRangesImplementation.exe
