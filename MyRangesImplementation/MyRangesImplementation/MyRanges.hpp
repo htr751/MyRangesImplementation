@@ -62,4 +62,36 @@ namespace ranges {
 			return m_transform(*m_curIterator);
 		}
 	};
-}#pragma once
+
+	template<typename Range>
+	constexpr bool isRange() {
+		return true;
+	}
+
+	namespace view {
+
+		template<typename Range, typename TransformFunc>
+		class transform_range_adaptor {
+			Range m_underlyingRange;
+			TransformFunc m_transform;
+		};
+	}
+}
+
+namespace typeValidation {
+	template<typename Func, typename T>
+	struct is_valid_impl {
+		template<typename, typename = void> 
+		struct checkValidation : std::false_type{};
+
+		template<typename U>
+		struct checkValidation<U, std::void_t<decltype(std::declval<Func>()(std::declval<U>()))>> : std::true_type {};
+
+		static constexpr bool value = checkValidation<T>::value;
+	};
+
+	template<typename T, typename Func>
+	constexpr bool is_valid(Func&& f) {
+		return is_valid_impl<Func, T>::value;
+	}
+}
