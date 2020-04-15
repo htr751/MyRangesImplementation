@@ -2,6 +2,7 @@
 #include<catch.hpp>
 struct NonRange {
 	void begin();
+	void end();
 };
 
 TEST_CASE("check if isRange function returns true for a vector range class", "[isRange]") {
@@ -24,3 +25,4 @@ TEST_CASE("check if is_iterator returns false for a type which isn't iterator", 
 	constexpr auto result = RangeTraits::is_iterator<NonRange>::value;
 	REQUIRE(result == false);
 }
+

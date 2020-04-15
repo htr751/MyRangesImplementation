@@ -2,7 +2,7 @@
 #include<iterator>
 #include<type_traits>
 
-namespace typeValidation {
+namespace typeInformation {
 	template<typename Func, typename T>
 	struct is_valid_impl {
 		template<typename, typename = void>
@@ -18,6 +18,18 @@ namespace typeValidation {
 	constexpr bool is_valid(Func&& f) {
 		return is_valid_impl<Func, T>::value;
 	}
+
+	struct invalid_expression {};
+
+	template<typename, typename, typename = void>
+	struct get_expression_type_if_valid {
+		using type = invalid_expression;
+	};
+
+	template<typename Func, typename T>
+	struct get_expression_type_if_valid<Func, T, std::void_t<decltype(std::declval<Func>()(std::declval<T>()))>> {
+		using type = typename std::invoke_result_t<Func, T>;
+	};
 }
 
 namespace RangeTraits {
@@ -30,10 +42,20 @@ namespace RangeTraits {
 
 	template<typename Range>
 	constexpr bool isRange() {
-		if constexpr (!typeValidation::template is_valid<Range>([](auto&& range)->decltype(range.begin()) {}))
+		auto has_begin_detector = [](auto&& range)->decltype(range.begin()) {};
+		if constexpr (!typeInformation::template is_valid<Range>(has_begin_detector))
 			return false;
-		if constexpr (!typeValidation::template is_valid<Range>([](auto&& range)->decltype(range.end()) {}))
+		if constexpr (!is_iterator<typename typeInformation::get_expression_type_if_valid<
+			decltype(has_begin_detector), Range >::type>::value)
 			return false;
+
+		auto has_end_detector = [](auto&& range)->decltype(range.end()) {};
+		if constexpr (!typeInformation::template is_valid<Range>(has_end_detector))
+			return false;
+		if constexpr (!is_iterator <typename typeInformation::get_expression_type_if_valid<
+			decltype(has_end_detector), Range >::type >::value)
+			return false;
+			
 		return true;
 	}
 }
@@ -101,4 +123,6 @@ namespace ranges {
 			return m_transform(*m_curIterator);
 		}
 	};
+
+
 }
