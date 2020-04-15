@@ -2,6 +2,36 @@
 #include<iterator>
 #include<type_traits>
 
+namespace typeValidation {
+	template<typename Func, typename T>
+	struct is_valid_impl {
+		template<typename, typename = void>
+		struct CheckValidation : std::false_type {};
+
+		template<typename U>
+		struct CheckValidation<U, std::void_t<decltype(std::declval<Func>()(std::declval<U>()))>> : std::true_type {};
+
+		static constexpr bool value = CheckValidation<T>::value;
+	};
+
+	template<typename T, typename Func>
+	constexpr bool is_valid(Func&& f) {
+		return is_valid_impl<Func, T>::value;
+	}
+}
+
+namespace RangeTraits {
+	template<typename Range>
+	constexpr bool isRange() {
+		if constexpr (!typeValidation::template is_valid<Range>([](auto&& range)->decltype(range.begin()) {}))
+			return false;
+		if constexpr (!typeValidation::template is_valid<Range>([](auto&& range)->decltype(range.end()) {}))
+			return false;
+		return true;
+	}
+}
+
+
 namespace ranges {
 	template<typename Iterator, typename TransformFunc, 
 	typename Stub = decltype(std::declval<TransformFunc>()(std::declval<typename std::iterator_traits<Iterator>::value_type>()))>
@@ -64,22 +94,4 @@ namespace ranges {
 			return m_transform(*m_curIterator);
 		}
 	};
-}
-
-namespace typeValidation {
-	template<typename Func, typename T>
-	struct is_valid_impl {
-		template<typename, typename = void>
-		struct CheckValidation : std::false_type {};
-
-		template<typename U>
-		struct CheckValidation<U, std::void_t<decltype(std::declval<Func>()(std::declval<U>()))>> : std::true_type {};
-
-		static constexpr bool value = CheckValidation<T>::value;
-	};
-
-	template<typename T, typename Func>
-	constexpr bool is_valid(Func&& f) {
-		return is_valid_impl<Func, T>::value;
-	}
 }
