@@ -65,3 +65,21 @@ namespace ranges {
 		}
 	};
 }
+
+namespace typeValidation {
+	template<typename Func, typename T>
+	struct is_valid_impl {
+		template<typename, typename = void>
+		struct CheckValidation : std::false_type {};
+
+		template<typename U>
+		struct CheckValidation<U, std::void_t<decltype(std::declval<Func>()(std::declval<U>()))>> : std::true_type {};
+
+		static constexpr bool value = CheckValidation<T>::value;
+	};
+
+	template<typename T, typename Func>
+	constexpr bool is_valid(Func&& f) {
+		return is_valid_impl<Func, T>::value;
+	}
+}
