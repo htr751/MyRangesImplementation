@@ -3,15 +3,6 @@
 #include<type_traits>
 #include<optional>
 #include<vector>
-#include<variant>
-
-template<typename... Handlers>
-struct overload : public Handlers...{
-	using Handlers::operator()...;
-};
-
-template<typename... Handlers>
-overload(Handlers...)->overload<Handlers...>;
 
 namespace typeInformation {
 	template<typename Func, typename T>
@@ -73,110 +64,127 @@ namespace RangeTraits {
 
 
 namespace ranges {
-	namespace internals {
-		namespace iterators {
-			template<typename Iterator, typename TransformFunc,
-				typename Stub = decltype(std::declval<TransformFunc>()(std::declval<typename std::iterator_traits<Iterator>::value_type>()))>
-				class transform_iterator
-			{
-				Iterator m_curIterator;
-				TransformFunc m_transform;
-			public:
-				using iterator_category = std::input_iterator_tag;
-				using value_type = decltype(std::declval<TransformFunc>()((std::declval<typename std::iterator_traits<Iterator>::value_type>())));
-				using difference_type = std::ptrdiff_t;
-				using pointer = std::add_pointer_t<value_type>;
-				using reference = std::add_lvalue_reference_t<value_type>;
+	template<typename Iterator, typename TransformFunc, 
+	typename Stub = decltype(std::declval<TransformFunc>()(std::declval<typename std::iterator_traits<Iterator>::value_type>()))>
+	class transform_iterator
+	{
+		Iterator m_curIterator;
+		TransformFunc m_transform;
+	public:
+		using iterator_category = std::input_iterator_tag;
+		using value_type = decltype(std::declval<TransformFunc>()((std::declval<typename std::iterator_traits<Iterator>::value_type>())));
+		using difference_type = std::ptrdiff_t;
+		using pointer = std::add_pointer_t<value_type>;
+		using reference = std::add_lvalue_reference_t<value_type>;
 
-				explicit transform_iterator(Iterator it, TransformFunc func)
-					noexcept(std::is_nothrow_move_constructible_v<Iterator>&& std::is_nothrow_move_constructible_v<TransformFunc>) :
+		explicit transform_iterator(Iterator it, TransformFunc func)
+			noexcept(std::is_nothrow_move_constructible_v<Iterator>&& std::is_nothrow_move_constructible_v<TransformFunc>) :
 
-					m_curIterator(std::move(it)), m_transform(std::move(func)) {}
+			m_curIterator(std::move(it)), m_transform(std::move(func)) {}
 
-				transform_iterator() noexcept = delete;
+		transform_iterator() noexcept = delete;
 
-				transform_iterator(const transform_iterator<Iterator, TransformFunc, Stub>& other)
-					noexcept(std::is_nothrow_copy_constructible_v<Iterator>&& std::is_nothrow_copy_constructible_v<TransformFunc>) = default;
+		transform_iterator(const transform_iterator<Iterator, TransformFunc, Stub>& other)
+			noexcept(std::is_nothrow_copy_constructible_v<Iterator>&& std::is_nothrow_copy_constructible_v<TransformFunc>) = default;
 
-				transform_iterator(transform_iterator<Iterator, TransformFunc, Stub>&& other)
-					noexcept(std::is_nothrow_move_constructible_v<Iterator>&& std::is_nothrow_move_constructible_v<TransformFunc>) = default;
+		transform_iterator(transform_iterator<Iterator, TransformFunc, Stub>&& other)
+			noexcept(std::is_nothrow_move_constructible_v<Iterator>&& std::is_nothrow_move_constructible_v<TransformFunc>) = default;
 
-				transform_iterator<Iterator, TransformFunc, Stub>& operator=(const transform_iterator<Iterator, TransformFunc, Stub>& other)
-					noexcept(std::is_nothrow_copy_assignable_v<Iterator>) {
-					this->m_curIterator = other.m_curIterator;
-					return *this;
-				}
-
-				transform_iterator<Iterator, TransformFunc, Stub>& operator=(transform_iterator<Iterator, TransformFunc, Stub>&& other)
-					noexcept(std::is_nothrow_move_assignable_v<Iterator>) {
-					this->m_curIterator = std::move(other.m_curIterator);
-					return *this;
-				}
-
-				transform_iterator<Iterator, TransformFunc, Stub>& operator++() noexcept(noexcept(++m_curIterator)) {
-					++m_curIterator; return *this;
-				}
-				transform_iterator<Iterator, TransformFunc, Stub> operator++(int) {
-					auto former_iterator = *this;
-					++(*this);
-					return former_iterator;
-				}
-
-				bool operator==(const transform_iterator<Iterator, TransformFunc, Stub>& other)
-					const noexcept(noexcept(this->m_curIterator == other.m_curIterator)) {
-					return this->m_curIterator == other.m_curIterator;
-				}
-
-				bool operator!=(const transform_iterator<Iterator, TransformFunc, Stub>& other)
-					const noexcept(noexcept(*this == other)) {
-					return !(*this == other);
-				}
-
-				decltype(auto) operator*() const noexcept(noexcept(m_transform(*m_curIterator))) {
-					return m_transform(*m_curIterator);
-				}
-			};
+		transform_iterator<Iterator, TransformFunc, Stub>& operator=(const transform_iterator<Iterator, TransformFunc, Stub>& other)
+			noexcept(std::is_nothrow_copy_assignable_v<Iterator>) {
+			this->m_curIterator = other.m_curIterator;
+			return *this;
 		}
 
-		namespace adaptorFactories {
-
+		transform_iterator<Iterator, TransformFunc, Stub>& operator=(transform_iterator<Iterator, TransformFunc, Stub>&& other)
+			noexcept(std::is_nothrow_move_assignable_v<Iterator>) {
+			this->m_curIterator = std::move(other.m_curIterator);
+			return *this;
 		}
-	}
+
+		transform_iterator<Iterator, TransformFunc, Stub>& operator++() noexcept(noexcept(++m_curIterator)) {
+			++m_curIterator; return *this;
+		}
+		transform_iterator<Iterator, TransformFunc, Stub> operator++(int) {
+			auto former_iterator = *this;
+			++(*this);
+			return former_iterator;
+		}
+
+		bool operator==(const transform_iterator<Iterator, TransformFunc, Stub>& other)
+			const noexcept(noexcept(this->m_curIterator == other.m_curIterator)) {
+			return this->m_curIterator == other.m_curIterator;
+		}
+
+		bool operator!=(const transform_iterator<Iterator, TransformFunc, Stub>& other)
+			const noexcept(noexcept(*this == other)) {
+			return !(*this == other);
+		}
+
+		decltype(auto) operator*() const noexcept(noexcept(m_transform(*m_curIterator))) {
+			return m_transform(*m_curIterator);
+		}
+	};
 
 	namespace view {
 		template<typename Range, typename TransformFunc, typename Stub = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
 		class transform_range_adaptor {
-			const Range& m_range;
+			std::optional<Range> m_range;
 			TransformFunc m_transform;
 
 			//this static variables remove code duplication in the noexcept clauses
 			static constexpr bool is_transformFunc_has_nothrow_move_ctor = std::is_nothrow_move_constructible_v<TransformFunc>;
 			static constexpr bool is_transformFunc_has_nothrow_copy_ctor = std::is_nothrow_copy_constructible_v<TransformFunc>;
+			static constexpr bool is_range_has_nothrow_move_ctor = std::is_nothrow_constructible_v<std::optional<Range>, std::add_rvalue_reference_t<Range>>;
+			static constexpr bool is_range_has_nothrow_copy_ctor = std::is_nothrow_constructible_v<std::optional<Range>, std::add_const_t<std::add_lvalue_reference_t<Range>>>;
+			static constexpr bool is_optionalRange_has_nothrow_copy_ctor = std::is_nothrow_copy_constructible_v<std::optional<Range>>;
+			static constexpr bool is_optionalRange_has_nothrow_move_ctor = std::is_nothrow_move_constructible_v<std::optional<Range>>;
+		
+			static constexpr bool is_range_has_nothrow_copy_assignment = std::is_nothrow_assignable_v<std::optional<Range>, std::add_const_t<std::add_lvalue_reference_t<Range>>>;
+			static constexpr bool is_range_has_nothow_move_assignment = std::is_nothrow_assignable_v<std::optional<Range>, std::add_rvalue_reference_t<Range>>;
 		public:
 			using value_type = std::invoke_result_t<TransformFunc, typename Range::value_type>;
-			using iterator = ranges::internals::iterators::transform_iterator<typename Range::iterator, TransformFunc>;
+			using iterator = ranges::transform_iterator<typename Range::iterator, TransformFunc>;
+
+			transform_range_adaptor(TransformFunc func)
+				noexcept(is_transformFunc_has_nothrow_move_ctor)
+				: m_transform(std::move(func)) {}
 
 			transform_range_adaptor(const Range& range, TransformFunc func)
-				noexcept(is_transformFunc_has_nothrow_move_ctor )
+				noexcept(is_transformFunc_has_nothrow_move_ctor && is_range_has_nothrow_copy_ctor)
 				: m_transform(std::move(func)), m_range(range) {}
 
 			transform_range_adaptor(Range&& range, TransformFunc func)
-				noexcept(is_transformFunc_has_nothrow_move_ctor)
-				: m_transform(std::move(func)), m_range(range) {}
+				noexcept(is_transformFunc_has_nothrow_move_ctor && is_range_has_nothrow_move_ctor)
+				: m_transform(std::move(func)), m_range(std::move(range)) {}
 
 			transform_range_adaptor(const transform_range_adaptor<Range, TransformFunc, Stub>& other)
-				noexcept(is_transformFunc_has_nothrow_copy_ctor)
+				noexcept(is_transformFunc_has_nothrow_copy_ctor&& is_optionalRange_has_nothrow_copy_ctor)
 				:m_transform(other.m_transform), m_range(other.m_range) {}
 
 			transform_range_adaptor(transform_range_adaptor<Range, TransformFunc, Stub>&& other)
-				noexcept(is_transformFunc_has_nothrow_move_ctor)
-				:m_transform(std::move(other.m_transform)), m_range(other.m_range) {}
+				noexcept(is_transformFunc_has_nothrow_move_ctor&& is_optionalRange_has_nothrow_move_ctor)
+				:m_transform(std::move(other.m_transform)), m_range(std::move(other.m_range)) {}
+
+			transform_range_adaptor<Range, TransformFunc, Stub>& operator=(const Range& range)
+				noexcept(is_range_has_nothrow_copy_assignment) {
+				this->m_range = range;
+			}
+
+			transform_range_adaptor<Range, TransformFunc, Stub>& operator=(Range&& range)
+				noexcept(is_range_has_nothrow_copy_assignment) {
+				this->m_range = std::move(range);
+			}
 
 			auto begin() const{
-				return ranges::internals::iterators::transform_iterator(this->m_range.begin(), this->m_transform);
+				if(this->m_range.has_value())
+					return ranges::transform_iterator(this->m_range.value().begin(), this->m_transform);
+				throw std::runtime_error("transform_range_adaptor wasn't spplied with underlying range");
 			}
 			auto end() const {
-				return ranges::internals::iterators::transform_iterator(this->m_range.end(), this->m_transform);
+				if(this->m_range.has_value())
+					return ranges::transform_iterator(this->m_range.value().end(), this->m_transform);
+				throw std::runtime_error("transform_range_adaptor wasn't spplied with underlying range");
 			}
 
 			decltype(auto) toVector() const {
