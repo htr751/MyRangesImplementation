@@ -32,5 +32,8 @@
     <ClCompile Include="transform_range_adaptor_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="filter_iterator_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

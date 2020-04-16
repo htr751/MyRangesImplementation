@@ -149,6 +149,7 @@
     <ClInclude Include="MyRanges.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="filter_iterator_test.cpp" />
     <ClCompile Include="is_valid_test.cpp" />
     <ClCompile Include="range_tarits_test.cpp" />
     <ClCompile Include="transform_iterator_test.cpp" />
