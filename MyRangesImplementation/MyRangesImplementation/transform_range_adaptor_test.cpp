@@ -33,3 +33,14 @@ TEST_CASE("check if transform_range_adaptor_factory returns expected transform_r
 		[](int x) {return 3 * x; })(vec);
 	REQUIRE(resultVector == std::vector<int>{3, 6, 9, 12, 15});
 }
+
+TEST_CASE("check if pipeline operator (operator |) works with transform range on lvalue vector", "[transform_range]") {
+	std::vector<int> vec{ 1,2,3,4,5 };
+	std::vector<int> resultVector = vec | ranges::view::transform([](int x) {return 2 * x; });
+	REQUIRE(resultVector == std::vector<int>{2, 4, 6, 8, 10});
+}
+
+TEST_CASE("check if pipeline operator (operator |) works with transform range on rvalue list", "[transform_range_adaptor]") {
+	std::vector<int> resultVector = std::list<int>{ 1,2,3,4,5 } | ranges::view::transform([](int x) {return 2 * x; });
+	REQUIRE(resultVector == std::vector<int>{2, 4, 6, 8, 10});
+}

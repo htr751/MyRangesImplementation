@@ -199,10 +199,24 @@ namespace ranges {
 					:m_transform(std::move(transform)) {}
 
 				template<typename Range, typename = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
-				auto operator()(Range&& range) {
+				auto operator()(Range&& range) const {
 					return ranges::view::transform_range_adaptor(std::forward<Range>(range), m_transform);
 				}
 			};
 		}
 	}
+
+	namespace view {
+		template<typename TransformFunc>
+		auto transform(TransformFunc&& transform){
+			return ranges::internals::adaptorFactories::transform_range_adaptor_factory(
+				std::forward<TransformFunc>(transform));
+		}
+	}
+}
+
+template<typename Range, typename TransformFunc>
+auto operator|(Range&& range,
+	const ranges::internals::adaptorFactories::transform_range_adaptor_factory<TransformFunc>& transformRangeFactory) {
+	return transformRangeFactory(std::forward<Range>(range));
 }
