@@ -38,5 +38,8 @@
     <ClCompile Include="filter_range_adapter_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="integreation_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
