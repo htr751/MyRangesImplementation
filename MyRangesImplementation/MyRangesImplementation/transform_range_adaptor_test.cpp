@@ -26,3 +26,10 @@ TEST_CASE("transform_range_adaptor test", "[transform_range_adaptor]") {
 		REQUIRE(resultVector == std::vector<int>{2, 4, 6, 8, 10});
 	}
 }
+
+TEST_CASE("check if transform_range_adaptor_factory returns expected transform_range_adaptor range", "[transform_range_adaptor]") {
+	std::vector<int> vec{ 1,2,3,4,5 };
+	std::vector<int> resultVector = ranges::internals::adaptorFactories::transform_range_adaptor_factory(
+		[](int x) {return 3 * x; })(vec);
+	REQUIRE(resultVector == std::vector<int>{3, 6, 9, 12, 15});
+}

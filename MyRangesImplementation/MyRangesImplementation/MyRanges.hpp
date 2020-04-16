@@ -137,10 +137,6 @@ namespace ranges {
 				}
 			};
 		}
-
-		namespace adaptorFactories {
-
-		}
 	}
 
 	namespace view {
@@ -190,5 +186,23 @@ namespace ranges {
 				return this->toVector();
 			}
 		};
+	}
+
+	namespace internals {
+		namespace adaptorFactories {
+			template<typename TransformFunc>
+			class transform_range_adaptor_factory {
+				TransformFunc m_transform;
+			public:
+				transform_range_adaptor_factory(TransformFunc transform)
+					noexcept(noexcept(std::is_nothrow_move_constructible_v<TransformFunc>))
+					:m_transform(std::move(transform)) {}
+
+				template<typename Range, typename = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+				auto operator()(Range&& range) {
+					return ranges::view::transform_range_adaptor(std::forward<Range>(range), m_transform);
+				}
+			};
+		}
 	}
 }
