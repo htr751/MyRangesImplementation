@@ -1,5 +1,7 @@
-﻿  range_tarits_test.cpp
+﻿  is_valid_test.cpp
+  range_tarits_test.cpp
   transform_iterator_test.cpp
   transform_range_adaptor_test.cpp
   Generating Code...
+  LINK : C:\Users\htr751\source\MyRangesImplementation\MyRangesImplementation\x64\Debug\MyRangesImplementation.exe not found or not built by the last incremental link; performing full link
   MyRangesImplementation.vcxproj -> C:\Users\htr751\source\MyRangesImplementation\MyRangesImplementation\x64\Debug\MyRangesImplementation.exe
