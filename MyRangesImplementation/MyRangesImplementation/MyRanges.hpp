@@ -316,6 +316,20 @@ namespace ranges {
 					return ranges::view::transform_range_adaptor(std::forward<Range>(range), m_transform);
 				}
 			};
+
+			template<typename FilterFunc>
+			class filter_range_adaptor_factory {
+				FilterFunc m_filter;
+			public:
+				filter_range_adaptor_factory(FilterFunc filter)
+					noexcept(std::is_nothrow_move_constructible_v<FilterFunc>)
+					:m_filter(std::move(filter)) {}
+
+				template<typename Range, typename = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+				auto operator()(Range&& range) const {
+					return ranges::view::filter_range_adapter(std::forward<Range>(range), m_filter);
+				}
+			};
 		}
 	}
 
@@ -325,6 +339,12 @@ namespace ranges {
 			return ranges::internals::adaptorFactories::transform_range_adaptor_factory(
 				std::forward<TransformFunc>(transform));
 		}
+
+		template<typename FilterFunc>
+		auto filter(FilterFunc&& filter) {
+			return ranges::internals::adaptorFactories::filter_range_adaptor_factory(
+				std::forward<FilterFunc>(filter));
+		}
 	}
 }
 
@@ -332,4 +352,10 @@ template<typename Range, typename TransformFunc, typename = std::enable_if_t<Ran
 auto operator|(Range&& range,
 	const ranges::internals::adaptorFactories::transform_range_adaptor_factory<TransformFunc>& transformRangeFactory) {
 	return transformRangeFactory(std::forward<Range>(range));
+}
+
+template<typename Range, typename FilterFunc, typename = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+auto operator|(Range&& range,
+	const ranges::internals::adaptorFactories::filter_range_adaptor_factory<FilterFunc>& filterRangeFactory) {
+	return filterRangeFactory(std::forward<Range>(range));
 }
