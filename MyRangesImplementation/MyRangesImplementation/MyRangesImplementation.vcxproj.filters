@@ -35,5 +35,8 @@
     <ClCompile Include="filter_iterator_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="filter_range_adapter_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

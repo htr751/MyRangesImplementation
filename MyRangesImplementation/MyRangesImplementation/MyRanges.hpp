@@ -234,10 +234,6 @@ namespace ranges {
 				noexcept(is_transformFunc_has_nothrow_move_ctor )
 				: m_transform(std::move(func)), m_range(range) {}
 
-			transform_range_adaptor(Range&& range, TransformFunc func)
-				noexcept(is_transformFunc_has_nothrow_move_ctor)
-				: m_transform(std::move(func)), m_range(range) {}
-
 			transform_range_adaptor(const transform_range_adaptor<Range, TransformFunc, Stub>& other)
 				noexcept(is_transformFunc_has_nothrow_copy_ctor)
 				:m_transform(other.m_transform), m_range(other.m_range) {}
@@ -255,8 +251,7 @@ namespace ranges {
 
 			decltype(auto) toVector() const {
 				std::vector<value_type> result;
-				for (auto&& value : *this)
-					result.push_back(value);
+				std::copy(this->begin(), this->end(), std::back_inserter(result));
 				return result;
 			}
 
@@ -264,7 +259,47 @@ namespace ranges {
 				return this->toVector();
 			}
 		};
-	}
+
+		template<typename Range, typename FilterFunc, typename Stub = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+		class filter_range_adapter {
+			const Range& m_range;
+			FilterFunc m_filter;
+
+		public:
+			using value_type = typename Range::value_type;
+			using iterator = ranges::internals::iterators::filter_iterator<typename Range::iterator, FilterFunc>;
+
+			filter_range_adapter(const Range& range, FilterFunc filter)
+				noexcept(std::is_move_constructible_v<FilterFunc>)
+				:m_range(range), m_filter(std::move(filter)) {}
+
+			filter_range_adapter(const filter_range_adapter<Range, FilterFunc>& other)
+				noexcept(std::is_copy_constructible_v<FilterFunc>)
+				:m_range(other.m_range), m_filter(other.m_filter) {}
+
+			filter_range_adapter(filter_range_adapter<Range, FilterFunc>&& other)
+				noexcept(std::is_move_constructible_v<FilterFunc>)
+				:m_range(other.m_range), m_filter(std::move(other.m_filter)) {}
+
+			auto begin() const {
+				return ranges::internals::iterators::filter_iterator(this->m_range.begin(), this->m_range.end(), this->m_filter);
+			}
+
+			auto end() const {
+				return ranges::internals::iterators::filter_iterator(this->m_range.end(), this->m_range.end(), this->m_filter);
+			}
+
+			decltype(auto) toVector() const{
+				std::vector<value_type> result;
+				std::copy(this->begin(), this->end(), std::back_inserter(result));
+				return result;
+			}
+
+			operator std::vector<value_type>() const {
+				return this->toVector();
+			}
+		};
+	}	
 
 	namespace internals {
 		namespace adaptorFactories {
