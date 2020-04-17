@@ -1,6 +1,2 @@
-﻿  filter_range_adapter_test.cpp
-  integreation_tests.cpp
-  is_valid_test.cpp
-  zip_range_adapter_test.cpp
-  Generating Code...
+﻿  cartezian_product_iterator_test.cpp
   MyRangesImplementation.vcxproj -> C:\Users\htr751\source\MyRangesImplementation\MyRangesImplementation\x64\Debug\MyRangesImplementation.exe
