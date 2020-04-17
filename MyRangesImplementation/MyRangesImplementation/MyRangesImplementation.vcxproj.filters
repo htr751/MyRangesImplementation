@@ -39,6 +39,9 @@
     <ClInclude Include="zip_range_adapter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cartezian_product_iterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="transform_iterator_test.cpp">

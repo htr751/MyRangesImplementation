@@ -27,3 +27,19 @@ TEST_CASE("check if is_iterator returns false for a type which isn't iterator", 
 	REQUIRE(result == false);
 }
 
+TEST_CASE("check if are_all_iterators return true for an empty list of iterators", "[are_all_iterators]") {
+	constexpr auto result = RangeTraits::are_all_iterators<>::value;
+	REQUIRE(result == true);
+}
+
+TEST_CASE("check if are_all_iterators return true for list of 3 iterators types", "[are_all_iterators]") {
+	constexpr auto result = RangeTraits::are_all_iterators<
+		std::vector<int>::iterator, std::list<int>::iterator, std::unordered_map<int, int>::iterator>::value;
+	REQUIRE(result == true);
+}
+
+TEST_CASE("check if are_all_iterators return false for list of 2 iterators and one non iterators", "[are_all_iterators]") {
+	constexpr auto result = RangeTraits::are_all_iterators<
+		std::vector<int>::iterator, NonRange, std::list<int>::iterator>::value;
+	REQUIRE(result == false);
+}

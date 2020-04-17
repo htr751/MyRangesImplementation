@@ -10,6 +10,11 @@ namespace RangeTraits {
 	struct is_iterator<Iterator, std::void_t<std::enable_if_t<
 		!std::is_same_v<typename std::iterator_traits<Iterator>::value_type, void>>>> : std::true_type{};
 
+	template<typename... Iterators>
+	struct are_all_iterators {
+		static constexpr bool value = (... && RangeTraits::is_iterator<Iterators>::value);
+	};
+
 	template<typename Range>
 	constexpr bool isRange() {
 		auto has_begin_detector = [](auto&& range)->decltype(range.begin()) {};
