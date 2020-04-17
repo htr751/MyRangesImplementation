@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include<catch.hpp>
 #include<vector>
-#include"MyRanges.hpp"
+#include"transform_iterator.hpp"
 
 namespace Catch {
 	template<typename Iterator, typename TransformFunc>

@@ -1,4 +1,5 @@
-#include"MyRanges.hpp"
+#include"range_traits.hpp"
+#include"transform_iterator.hpp"
 #include<catch.hpp>
 struct NonRange {
 	void begin();

@@ -146,7 +146,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="MyRanges.hpp" />
+    <ClInclude Include="filter_iterator.hpp" />
+    <ClInclude Include="filter_range_adapter.hpp" />
+    <ClInclude Include="range_traits.hpp" />
+    <ClInclude Include="transform_iterator.hpp" />
+    <ClInclude Include="transform_range_adapter.hpp" />
+    <ClInclude Include="typeInformation.hpp" />
+    <ClInclude Include="zip_iterator.hpp" />
+    <ClInclude Include="zip_range_adapter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="filter_iterator_test.cpp" />

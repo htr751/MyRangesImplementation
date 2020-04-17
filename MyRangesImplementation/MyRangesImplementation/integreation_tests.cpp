@@ -1,4 +1,6 @@
-#include"MyRanges.hpp"
+#include"transform_range_adapter.hpp"
+#include"filter_range_adapter.hpp"
+#include"zip_range_adapter.hpp"
 #include<catch.hpp>
 
 TEST_CASE("given vector {1,2,3,4,5} when transforming the vector by multiplying all elements by 3 and filtering even numbers the resulting vector will be {6, 12}", "[integreation_tests]") {
