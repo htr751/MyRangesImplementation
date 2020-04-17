@@ -1,5 +1,6 @@
 #include"range_traits.hpp"
 #include"transform_iterator.hpp"
+#include"filter_range_adapter.hpp"
 #include<catch.hpp>
 struct NonRange {
 	void begin();
@@ -41,5 +42,17 @@ TEST_CASE("check if are_all_iterators return true for list of 3 iterators types"
 TEST_CASE("check if are_all_iterators return false for list of 2 iterators and one non iterators", "[are_all_iterators]") {
 	constexpr auto result = RangeTraits::are_all_iterators<
 		std::vector<int>::iterator, NonRange, std::list<int>::iterator>::value;
+	REQUIRE(result == false);
+}
+
+TEST_CASE("check if are_all_ranges returns true for vector, filter_range and list", "[are_all_ranges]") {
+	auto filterFunc = [](int x) {return x % 2 == 0; };
+	constexpr auto result = RangeTraits::are_all_ranges<std::vector<int>,
+		ranges::view::filter_range_adapter<std::vector<int>, decltype(filterFunc)>, std::list<int>>::value;
+	REQUIRE(result == true);
+}
+
+TEST_CASE("check if are_all_ranges returns false for vector NonRange and list", "[are_all_ranges]") {
+	constexpr auto result = RangeTraits::are_all_ranges<std::vector<int>, NonRange, std::list<int>>::value;
 	REQUIRE(result == false);
 }

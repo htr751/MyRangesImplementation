@@ -146,7 +146,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="cartezian_product_iterator.h" />
+    <ClInclude Include="cartezian_product_iterator.hpp" />
+    <ClInclude Include="cartezian_product_range_adapter.hpp" />
     <ClInclude Include="filter_iterator.hpp" />
     <ClInclude Include="filter_range_adapter.hpp" />
     <ClInclude Include="range_traits.hpp" />

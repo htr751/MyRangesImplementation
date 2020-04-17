@@ -33,4 +33,9 @@ namespace RangeTraits {
 
 		return true;
 	}
+
+	template<typename... Ranges>
+	struct are_all_ranges {
+		static constexpr bool value = (... && isRange<Ranges>());
+	};
 }
