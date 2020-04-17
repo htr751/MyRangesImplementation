@@ -71,5 +71,8 @@
     <ClCompile Include="zip_range_adapter_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cartezian_product_iterator_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

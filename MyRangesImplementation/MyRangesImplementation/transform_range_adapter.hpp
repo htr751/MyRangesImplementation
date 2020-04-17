@@ -6,8 +6,11 @@
 
 namespace ranges {
 	namespace view {
-		template<typename Range, typename TransformFunc, typename Stub = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+		template<typename Range, typename TransformFunc>
 		class transform_range_adaptor {
+			static_assert(RangeTraits::isRange<Range>(),
+				"error: the first type must be a Range type");
+
 			const Range& m_range;
 			TransformFunc m_transform;
 
@@ -22,11 +25,11 @@ namespace ranges {
 				noexcept(is_transformFunc_has_nothrow_move_ctor)
 				: m_transform(std::move(func)), m_range(range) {}
 
-			transform_range_adaptor(const transform_range_adaptor<Range, TransformFunc, Stub>& other)
+			transform_range_adaptor(const transform_range_adaptor<Range, TransformFunc>& other)
 				noexcept(is_transformFunc_has_nothrow_copy_ctor)
 				:m_transform(other.m_transform), m_range(other.m_range) {}
 
-			transform_range_adaptor(transform_range_adaptor<Range, TransformFunc, Stub>&& other)
+			transform_range_adaptor(transform_range_adaptor<Range, TransformFunc>&& other)
 				noexcept(is_transformFunc_has_nothrow_move_ctor)
 				:m_transform(std::move(other.m_transform)), m_range(other.m_range) {}
 
@@ -61,8 +64,10 @@ namespace ranges {
 					noexcept(noexcept(std::is_nothrow_move_constructible_v<TransformFunc>))
 					:m_transform(std::move(transform)) {}
 
-				template<typename Range, typename = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+				template<typename Range>
 				auto operator()(Range&& range) const {
+					static_assert(RangeTraits::isRange<Range>(),
+						"error: the given type must be a range type");
 					return ranges::view::transform_range_adaptor(std::forward<Range>(range), m_transform);
 				}
 			};
@@ -80,8 +85,10 @@ namespace ranges {
 	}
 }
 
-template<typename Range, typename TransformFunc, typename = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+template<typename Range, typename TransformFunc>
 auto operator|(Range&& range,
 	const ranges::internals::adaptorFactories::transform_range_adaptor_factory<TransformFunc>& transformRangeFactory) {
+	static_assert(RangeTraits::isRange<Range>(),
+		"error: the given first type must be a Range type");
 	return transformRangeFactory(std::forward<Range>(range));
 }

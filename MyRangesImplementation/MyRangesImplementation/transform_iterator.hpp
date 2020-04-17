@@ -1,6 +1,7 @@
 #pragma once
 #include<type_traits>
 #include<iterator>
+#include"range_traits.hpp"
 
 namespace ranges {
 	namespace internals {
@@ -9,6 +10,9 @@ namespace ranges {
 				typename Stub = decltype(std::declval<TransformFunc>()(std::declval<typename std::iterator_traits<Iterator>::value_type>()))>
 				class transform_iterator
 			{
+				static_assert(RangeTraits::is_iterator<Iterator>::value,
+					"error: the first type must be an iterator type");
+
 				Iterator m_curIterator;
 				TransformFunc m_transform;
 			public:

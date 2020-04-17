@@ -6,9 +6,9 @@
 
 namespace ranges {
 	namespace view {
-
-		template<typename Range, typename FilterFunc, typename Stub = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+		template<typename Range, typename FilterFunc>
 		class filter_range_adapter {
+			static_assert(RangeTraits::isRange<Range>(), "error: the given first type must be a Range type");
 			const Range& m_range;
 			FilterFunc m_filter;
 
@@ -60,8 +60,10 @@ namespace ranges {
 					noexcept(std::is_nothrow_move_constructible_v<FilterFunc>)
 					:m_filter(std::move(filter)) {}
 
-				template<typename Range, typename = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+				template<typename Range>
 				auto operator()(Range&& range) const {
+					static_assert(RangeTraits::isRange<Range>(),
+						"error: the given type must be a Range type");
 					return ranges::view::filter_range_adapter(std::forward<Range>(range), m_filter);
 				}
 			};
@@ -80,8 +82,10 @@ namespace ranges {
 }
 
 
-template<typename Range, typename FilterFunc, typename = std::enable_if_t<RangeTraits::isRange<Range>(), void>>
+template<typename Range, typename FilterFunc>
 auto operator|(Range&& range,
 	const ranges::internals::adaptorFactories::filter_range_adaptor_factory<FilterFunc>& filterRangeFactory) {
+	static_assert(RangeTraits::isRange<Range>(),
+		"error: the given first type must be a Range type");
 	return filterRangeFactory(std::forward<Range>(range));
 }
