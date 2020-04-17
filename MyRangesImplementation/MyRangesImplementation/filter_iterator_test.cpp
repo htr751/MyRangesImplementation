@@ -15,7 +15,7 @@ TEST_CASE("checking filter_iterator functionallity", "[filter_iterator]") {
 	auto filterFunc = [](int x) {return (x % 2) == 0; };
 	auto filterIterator = ranges::internals::iterators::filter_iterator(vec.begin(), vec.end(), filterFunc);
 
-	SECTION("checing filter_iterator operator == returns true for two begin iterator") {
+	SECTION("checing filter_iterator operator == returns true for two begin iterators") {
 		auto checkIterator = ranges::internals::iterators::filter_iterator(vec.begin(), vec.end(), filterFunc);
 		REQUIRE(filterIterator == checkIterator);
 	}
