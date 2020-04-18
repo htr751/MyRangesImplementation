@@ -61,6 +61,13 @@ TEST_CASE("checking cartezian_product_iterator functionallity", "[cartezian_prod
 		CHECK(*vecProductLstIterator == std::tuple{2, 4});
 	}
 
+	SECTION("check that getEnd function returns the real end iterator", "[cartezian_product_iterator]") {
+		auto vecProductLstIteratorEnd = vecProductLstIterator.getEndIterator();
+		++(++(++(++vecProductLstIterator)));
+		//currently vecProductLstIterator points to the end
+		REQUIRE(vecProductLstIteratorEnd == vecProductLstIterator);
+	}
+
 	SECTION("check operator ++(postfix version)", "[cartezian_product_iterator]") {
 		auto tmp = vecProductLstIterator;
 		auto formerValue = vecProductLstIterator++;

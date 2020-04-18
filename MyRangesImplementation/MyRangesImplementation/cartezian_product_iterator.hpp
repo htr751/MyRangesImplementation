@@ -56,7 +56,22 @@ namespace ranges {
 						std::tuple_size_v<decltype(this->m_beginCurrenEndIterTuples)>>{});
 				}
 
+				auto getEndIterator() const {
+					auto copyOfThis = *this;
+					copyOfThis.setAllCurrentIteratorsToTheirEnd(
+						std::make_index_sequence<std::tuple_size_v<decltype(copyOfThis.m_beginCurrenEndIterTuples)>>{});
+					return copyOfThis;
+				}
+
 			private:
+				template<std::size_t... indicies>
+				void setAllCurrentIteratorsToTheirEnd(std::index_sequence<indicies...>){
+					auto setCurrentIteratorsToEnd = [](auto& iterTuple) {
+						std::get<1>(iterTuple) = std::get<2>(iterTuple);
+					};
+					(setCurrentIteratorsToEnd(std::get<indicies>(this->m_beginCurrenEndIterTuples)), ...);
+				}
+
 				template<std::size_t... indicies>
 				decltype(auto) makeTupleOfIteratorValues(std::index_sequence<indicies...>)const {
 					return std::make_tuple((*std::get<1>(std::get<indicies>(this->m_beginCurrenEndIterTuples)))...);
