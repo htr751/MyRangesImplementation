@@ -152,6 +152,7 @@
     <ClInclude Include="filter_range_adapter.hpp" />
     <ClInclude Include="generator_iterator.hpp" />
     <ClInclude Include="generator_range_adapter.hpp" />
+    <ClInclude Include="ranges.hpp" />
     <ClInclude Include="range_traits.hpp" />
     <ClInclude Include="take_range_adapter.hpp" />
     <ClInclude Include="transform_iterator.hpp" />

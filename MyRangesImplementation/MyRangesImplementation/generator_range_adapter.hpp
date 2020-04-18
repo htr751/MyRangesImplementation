@@ -29,7 +29,7 @@ namespace ranges {
 			}
 		};
 
-		auto ints(int initial_value, int end_value = std::numeric_limits<int>::max()/4096) noexcept {
+		inline auto ints(int initial_value, int end_value = std::numeric_limits<int>::max()/4096) noexcept {
 			return ranges::view::generator_range_adapter<int>(initial_value, end_value);
 		}
 	}
