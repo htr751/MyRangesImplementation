@@ -153,6 +153,7 @@
     <ClInclude Include="generator_iterator.hpp" />
     <ClInclude Include="generator_range_adapter.hpp" />
     <ClInclude Include="range_traits.hpp" />
+    <ClInclude Include="take_range_adapter.hpp" />
     <ClInclude Include="transform_iterator.hpp" />
     <ClInclude Include="transform_range_adapter.hpp" />
     <ClInclude Include="typeInformation.hpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="integreation_tests.cpp" />
     <ClCompile Include="is_valid_test.cpp" />
     <ClCompile Include="range_tarits_test.cpp" />
+    <ClCompile Include="take_range_adapter_test.cpp" />
     <ClCompile Include="transform_iterator_test.cpp" />
     <ClCompile Include="transform_range_adaptor_test.cpp" />
     <ClCompile Include="zip_iterator_test.cpp" />

@@ -51,6 +51,9 @@
     <ClInclude Include="generator_range_adapter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="take_range_adapter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="transform_iterator_test.cpp">
@@ -90,6 +93,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="generator_range_adapter_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="take_range_adapter_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -14,7 +14,7 @@ namespace ranges {
 
 		public:
 			using value_type = std::tuple<typename Ranges::value_type...>;
-			using iterator = ranges::internals::iterators::cartezian_product_iterator<typename Ranges::iterator...>;
+			using iterator = ranges::internals::iterators::cartezian_product_iterator<typename Ranges::const_iterator...>;
 
 			cartezian_product_range_adapter(const Ranges&... ranges)
 				noexcept(noexcept(std::make_tuple(ranges...)))
@@ -46,7 +46,7 @@ namespace ranges {
 			template<std::size_t... indicies>
 			auto extractBeginEndIteratorsFromRangesTupleToCallBegin(std::index_sequence<indicies...>) const {
 				return ranges::internals::iterators::cartezian_product_iterator
-					(std::pair(std::get<indicies>(this->m_ranges).begin(), std::get<indicies>(this->m_ranges).end())...);
+					(std::pair(std::get<indicies>(this->m_ranges).cbegin(), std::get<indicies>(this->m_ranges).cend())...);
 			}
 		};
 
