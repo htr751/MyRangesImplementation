@@ -27,3 +27,11 @@ TEST_CASE("given vector {1,2} and list {roy, tomer} check that casting to vector
 		std::tuple{2, std::string{"tomer"}} });
 }
 
+TEST_CASE("given vector {1,2} and list {3,4} check that cartezian_product function returns range that when casting to vector equals to {{1,3},{2,3},{1,4},{2,4}}", "[cartezian_product_range_adapter]") {
+	auto vec = std::vector{ 1,2 };
+	auto lst = std::list{ 3,4 };
+	auto cartezian_product_range = ranges::view::cartezian_product(vec, lst);
+	auto cartezian_product_vector = (std::vector<decltype(cartezian_product_range)::value_type>)cartezian_product_range;
+	REQUIRE(cartezian_product_vector == std::vector{ std::tuple{1,3}, std::tuple{2,3}, std::tuple{1,4}, std::tuple{2,4} });
+
+}

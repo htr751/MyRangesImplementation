@@ -48,9 +48,13 @@ namespace ranges {
 				return ranges::internals::iterators::cartezian_product_iterator
 					(std::pair(std::get<indicies>(this->m_ranges).begin(), std::get<indicies>(this->m_ranges).end())...);
 			}
-
-			
-
 		};
+
+		template<typename... Ranges>
+		auto cartezian_product(Ranges&&... ranges) {
+			static_assert(RangeTraits::are_all_ranges<Ranges...>::value,
+				"error: all given types must be range types");
+			return ranges::view::cartezian_product_range_adapter{ std::forward<Ranges>(ranges)... };
+		}
 	}
 }
