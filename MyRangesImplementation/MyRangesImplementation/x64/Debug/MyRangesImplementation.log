@@ -1,2 +1,4 @@
-﻿  generator_range_adapter_test.cpp
+﻿  Source.cpp
+  take_range_adapter_test.cpp
+  Generating Code...
   MyRangesImplementation.vcxproj -> C:\Users\htr751\source\MyRangesImplementation\MyRangesImplementation\x64\Debug\MyRangesImplementation.exe
