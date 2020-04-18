@@ -45,6 +45,9 @@
     <ClInclude Include="cartezian_product_iterator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="generator_iterator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="transform_iterator_test.cpp">
@@ -78,6 +81,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cartezian_product_range_adapter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generator_iterator_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

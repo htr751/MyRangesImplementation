@@ -150,6 +150,7 @@
     <ClInclude Include="cartezian_product_range_adapter.hpp" />
     <ClInclude Include="filter_iterator.hpp" />
     <ClInclude Include="filter_range_adapter.hpp" />
+    <ClInclude Include="generator_iterator.hpp" />
     <ClInclude Include="range_traits.hpp" />
     <ClInclude Include="transform_iterator.hpp" />
     <ClInclude Include="transform_range_adapter.hpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="cartezian_product_range_adapter.cpp" />
     <ClCompile Include="filter_iterator_test.cpp" />
     <ClCompile Include="filter_range_adapter_test.cpp" />
+    <ClCompile Include="generator_iterator_test.cpp" />
     <ClCompile Include="integreation_tests.cpp" />
     <ClCompile Include="is_valid_test.cpp" />
     <ClCompile Include="range_tarits_test.cpp" />
