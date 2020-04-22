@@ -21,7 +21,7 @@ all those ranges are view ranges and are lazy evaluated(the actual actions happe
 for each of the above ranges there is a function with the same name that makes that range, while supplying underlying ranges(if necessary) using the pipeline operator(operator |).
 for example, lets say I want to create a vector which contains only the odd numbers of a the vector {1,2,3,4,5,6} multiplied by 2.
 Then I will do the following:
-```std::vector<int> vec{1,2,3,4,5,6};
+``` std::vector<int> vec{1,2,3,4,5,6};
 
    std::vector<int> result = vec | ranges::view::filter([](int x){return x%2!=0;}) | ranges::view::transform([](int x){return x*2;});
    ```
