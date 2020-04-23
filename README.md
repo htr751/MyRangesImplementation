@@ -1,5 +1,4 @@
 # MyRangesImplementation
-[![Build Status](https://travis-ci.org/{ORG-or-USERNAME}/{REPO-NAME}.png?branch=master)](https://travis-ci.org/{ORG-or-USERNAME}/{REPO-NAME})
 a simple implmenetation of some ranges facilities of the std::experimental::ranges::view namespace distributed as a header only library for c++14/17/20.
 
 # About
