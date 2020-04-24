@@ -7,6 +7,7 @@ namespace ranges {
 		namespace iterators {
 			template<typename Iterator, typename FilterFunc>
 			class filter_iterator {
+				//generate compile time error if the given first type is not an iterator
 				static_assert(RangeTraits::is_iterator<Iterator>::value,
 					"filter_iterator must accept iterator type: the given iterator is not an iterator type");
 
@@ -20,7 +21,8 @@ namespace ranges {
 				using difference_type = std::ptrdiff_t;
 				using pointer = typename std::iterator_traits<Iterator>::pointer;
 				using reference = typename std::iterator_traits<Iterator>::reference;
-
+				//advance the given current iterator to the first point where the filter
+				//predicate returns true
 				explicit filter_iterator(Iterator current, Iterator end, FilterFunc filter)
 					noexcept(std::is_nothrow_move_constructible_v<Iterator>&& std::is_nothrow_move_assignable_v<FilterFunc>)
 					:m_current(std::move(current)), m_end(std::move(end)), m_filter(std::move(filter))
@@ -35,9 +37,9 @@ namespace ranges {
 					noexcept(std::is_nothrow_copy_constructible_v<Iterator>&& std::is_nothrow_copy_constructible_v<FilterFunc>) = default;
 
 				filter_iterator(filter_iterator<Iterator, FilterFunc>&&)
-					noexcept(std::is_nothrow_move_constructible_v<Iterator> && std::is_nothrow_move_constructible_v<FilterFunc>) = default;
+					noexcept(std::is_nothrow_move_constructible_v<Iterator>&& std::is_nothrow_move_constructible_v<FilterFunc>) = default;
 
-				filter_iterator<Iterator, FilterFunc>& operator=(const filter_iterator<Iterator, FilterFunc> & other)
+				filter_iterator<Iterator, FilterFunc>& operator=(const filter_iterator<Iterator, FilterFunc>& other)
 					noexcept(std::is_nothrow_copy_constructible_v<Iterator>)
 				{
 					if (this != &other) {
@@ -47,7 +49,7 @@ namespace ranges {
 					return *this;
 				}
 
-				filter_iterator<Iterator, FilterFunc>& operator=(filter_iterator<Iterator, FilterFunc> && other)
+				filter_iterator<Iterator, FilterFunc>& operator=(filter_iterator<Iterator, FilterFunc>&& other)
 					noexcept(std::is_nothrow_move_constructible_v<Iterator>)
 				{
 					if (this != &other) {
@@ -56,7 +58,7 @@ namespace ranges {
 					}
 					return *this;
 				}
-
+				//moving the filter iterator to the next point where the filter predicate returns true
 				filter_iterator<Iterator, FilterFunc>& operator++() {
 					if (this->m_current == this->m_end)
 						return *this;
@@ -72,11 +74,11 @@ namespace ranges {
 					return former_value;
 				}
 
-				bool operator==(const filter_iterator<Iterator, FilterFunc> & other) const noexcept(noexcept(this->m_current == other.m_current)) {
+				bool operator==(const filter_iterator<Iterator, FilterFunc>& other) const noexcept(noexcept(this->m_current == other.m_current)) {
 					return this->m_current == other.m_current && this->m_end == other.m_end;
 				}
 
-				bool operator!=(const filter_iterator<Iterator, FilterFunc> & other) const noexcept(noexcept(*this == other)) {
+				bool operator!=(const filter_iterator<Iterator, FilterFunc>& other) const noexcept(noexcept(*this == other)) {
 					return !(*this == other);
 				}
 
@@ -84,7 +86,7 @@ namespace ranges {
 					return *this->m_current;
 				}
 			};
-			
+
 		}
 	}
 }
