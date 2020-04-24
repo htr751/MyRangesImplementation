@@ -8,6 +8,7 @@ namespace ranges {
 	namespace view {
 		template<typename Range, typename FilterFunc>
 		class filter_range_adapter {
+			//create compile time error if the given first type is not a range
 			static_assert(RangeTraits::isRange<Range>(), "error: the given first type must be a Range type");
 			const Range& m_range;
 			FilterFunc m_filter;
@@ -48,7 +49,9 @@ namespace ranges {
 		};
 	}
 }
-
+//adaptor factory to create filter range factory that accepts in it constructor only a filter function
+//to create filter_range_adaptor using the factory operator | must be used and must be supplied with 
+// a factory and an underlying range
 namespace ranges {
 	namespace internals {
 		namespace adaptorFactories {
