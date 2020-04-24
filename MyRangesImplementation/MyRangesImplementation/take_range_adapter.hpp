@@ -2,7 +2,7 @@
 #include"range_traits.hpp"
 #include<vector>
 #include<algorithm>
-
+//an range adaptor that returns a view of only limit number of elements from the underlying range
 namespace ranges {
 	namespace view {
 		template<typename Range>
