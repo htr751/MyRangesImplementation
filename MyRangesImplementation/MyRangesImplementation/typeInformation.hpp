@@ -15,7 +15,7 @@ namespace typeInformation {
 	};
 
 	template<typename T, typename Func>
-	constexpr bool is_valid(Func&& f) {
+	constexpr bool is_valid(Func&&) {
 		return is_valid_impl<Func, T>::value;
 	}
 
