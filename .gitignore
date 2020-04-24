@@ -1,0 +1,14 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/MyRangesImplementation/v16/.suo
+/.vs
+/MyRangesImplementation/.vs/MyRangesImplementation/v16
+/MyRangesImplementation/Debug
+/MyRangesImplementation/MyRangesImplementation/Debug/MyRanges.15382ABA.tlog
+/MyRangesImplementation/MyRangesImplementation/Debug
+/MyRangesImplementation/MyRangesImplementation/x64/Debug
+/MyRangesImplementation/MyRangesImplementation/MyRangesImplementation.exe
+/MyRangesImplementation/MyRangesImplementation/MyRangesImplementation.ilk
+/MyRangesImplementation/MyRangesImplementation/MyRangesImplementation.pdb
