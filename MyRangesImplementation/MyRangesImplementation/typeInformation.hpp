@@ -2,6 +2,7 @@
 #include<type_traits>
 
 namespace typeInformation {
+	//checks at compile time if a given expression is valid (the detector pattern).
 	template<typename Func, typename T>
 	struct is_valid_impl {
 		template<typename, typename = void>
@@ -24,7 +25,7 @@ namespace typeInformation {
 	struct get_expression_type_if_valid {
 		using type = invalid_expression;
 	};
-
+	//get the type of the result of an expression if it is valid
 	template<typename Func, typename T>
 	struct get_expression_type_if_valid<Func, T, std::void_t<decltype(std::declval<Func>()(std::declval<T>()))>> {
 		using type = typename std::invoke_result_t<Func, T>;
