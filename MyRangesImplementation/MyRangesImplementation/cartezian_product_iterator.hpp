@@ -2,17 +2,28 @@
 #include<type_traits>
 #include"range_traits.hpp"
 
+//cartezian product iterator implementation. 
+//a range is somthing that has begin function and end function that return iterators
+//this iterator is an implementation of an iterator that unique to the cartezian_product_range
 namespace ranges {
 	namespace internals {
 		namespace iterators {
 			template<typename... Iterators>
 			class cartezian_product_iterator {
+				//there will be a compile time error if not all the types in the
+				//supplied variadic pack are iterators
 				static_assert(RangeTraits::are_all_iterators<Iterators...>::value,
-					"error: all template parameters should be iterators" );
-
+					"error: all template parameters should be iterators");
+				//this data member contain the begin iterator, current iterator and end iterator for 
+				//each range the cartezian_product_iterator is going to work on
+				//this data is essential because in cartezian product the begin and end 
+				//iterators must be save to be able to return to them
+				//also a current iterator is essential so that the implementation will know 
+				//what is the current element of each range we are currently at
 				std::tuple<std::tuple<Iterators, Iterators, Iterators>...> m_beginCurrenEndIterTuples;
 
 			public:
+				//typenames that must be in each itrerator
 				using iterator_category = std::input_iterator_tag;
 				using value_type = std::tuple<typename std::iterator_traits<Iterators>::value_type...>;
 				using difference_type = std::ptrdiff_t;
@@ -31,6 +42,9 @@ namespace ranges {
 				cartezian_product_iterator<Iterators...>& operator=(cartezian_product_iterator<Iterators...>&&) = default;
 
 				cartezian_product_iterator<Iterators...>& operator++() {
+					//to be able to access the data in the tuple data member we must use an helper
+					//function that accepts at compile time all the indicies of the of the tuple
+					//(kind of for loop at compile time)
 					advanceCartezianIterator(std::make_index_sequence<
 						std::tuple_size_v<decltype(this->m_beginCurrenEndIterTuples)>
 					>{});
@@ -52,6 +66,8 @@ namespace ranges {
 				}
 
 				decltype(auto) operator*() const {
+					//same as operator ++, to be able to access the tuple, we must
+					//use an helper function that accepts all the indicies of the tuple
 					return makeTupleOfIteratorValues(std::make_index_sequence<
 						std::tuple_size_v<decltype(this->m_beginCurrenEndIterTuples)>>{});
 				}
@@ -65,10 +81,12 @@ namespace ranges {
 
 			private:
 				template<std::size_t... indicies>
-				void setAllCurrentIteratorsToTheirEnd(std::index_sequence<indicies...>){
+				void setAllCurrentIteratorsToTheirEnd(std::index_sequence<indicies...>) {
+					//lambda that set the current iterator of some iterator tuple to the end iterator
 					auto setCurrentIteratorsToEnd = [](auto& iterTuple) {
 						std::get<1>(iterTuple) = std::get<2>(iterTuple);
 					};
+					//apply the lambda on all the itrators in a fold expression
 					(setCurrentIteratorsToEnd(std::get<indicies>(this->m_beginCurrenEndIterTuples)), ...);
 				}
 
