@@ -20,7 +20,7 @@ namespace ranges {
 			generator_range_adapter(const generator_range_adapter<Advancable>&) = default;
 			generator_range_adapter(generator_range_adapter<Advancable>&&) = default;
 
-			auto begin() const noexcept(std::is_nothrow_constructible_v<iterator, Advancable>){
+			auto begin() const noexcept(std::is_nothrow_constructible_v<iterator, Advancable>) {
 				return ranges::internals::iterators::generator_iterator{ this->m_initialValue };
 			}
 
@@ -28,8 +28,8 @@ namespace ranges {
 				return this->endIter;
 			}
 		};
-
-		inline auto ints(int initial_value, int end_value = std::numeric_limits<int>::max()/4096) noexcept {
+		//creates range that contains almost all the availiable ints, computed in a lazy evaluation fashion
+		inline auto ints(int initial_value, int end_value = std::numeric_limits<int>::max() / 4096) noexcept {
 			return ranges::view::generator_range_adapter<int>(initial_value, end_value);
 		}
 	}
