@@ -7,12 +7,13 @@ namespace ranges {
 		namespace iterators {
 			template<typename Advancable>
 			class generator_iterator {
+				//generate compile time error if the given type is not type that can be advanced
 				static_assert(typeInformation::is_valid<Advancable>([](auto&& val)->decltype(++val) {}),
 					"error: given type must be type with operator ++(prefix version)");
 				static_assert(std::is_assignable_v<
 					std::add_lvalue_reference_t<Advancable>, std::add_lvalue_reference_t<Advancable>>
 					, "error: given type must be assignable");
-				
+
 				Advancable m_cur;
 			public:
 				using iterator_category = std::input_iterator_tag;
@@ -22,7 +23,7 @@ namespace ranges {
 				using reference = std::add_lvalue_reference_t<Advancable>;
 
 				explicit generator_iterator(Advancable&& value)
-					noexcept(std::is_nothrow_move_constructible_v<Advancable>): m_cur(std::move(value)) {}
+					noexcept(std::is_nothrow_move_constructible_v<Advancable>) : m_cur(std::move(value)) {}
 
 				explicit generator_iterator(const Advancable& value)
 					noexcept(std::is_nothrow_copy_constructible_v<Advancable>) : m_cur(value) {}
@@ -45,7 +46,7 @@ namespace ranges {
 					return former_value;
 				}
 
-				bool operator==(const generator_iterator& other) const{
+				bool operator==(const generator_iterator& other) const {
 					return this->m_cur == other.m_cur;
 				}
 
